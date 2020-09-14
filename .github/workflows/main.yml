@@ -1,0 +1,16 @@
+name: Build debug APK
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: ./gradlew :core:test assembleDebug
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Debug APK
+        path: ./app/build/outputs/apk/debug/app-debug.apk
