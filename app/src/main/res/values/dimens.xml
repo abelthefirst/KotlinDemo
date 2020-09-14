@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_s">8dp</dimen>
+    <dimen name="spacing_m">16dp</dimen>
+
+    <dimen name="item_image_size_thumbnail">96dp</dimen>
+    <dimen name="item_image_size_details">256dp</dimen>
+
+</resources>
