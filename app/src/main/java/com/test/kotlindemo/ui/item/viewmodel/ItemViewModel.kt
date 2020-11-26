@@ -4,11 +4,13 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.test.core.data.repository.BreakingBadCharacter
 import com.test.core.data.repository.CharactersRepository
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ItemViewModel(charactersRepository: CharactersRepository, context: Context, id: Int) : ViewModel() {
 
@@ -22,30 +24,26 @@ class ItemViewModel(charactersRepository: CharactersRepository, context: Context
 
     val status = MutableLiveData<String>()
 
-    private val disposable: Disposable
-
     init {
-        disposable = charactersRepository.getCharacter(id)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                handleNext(it)
-            }, {
-                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
-            })
+        val handler = CoroutineExceptionHandler { _, exception ->
+            Toast.makeText(context, exception.message, Toast.LENGTH_SHORT).show()
+        }
+        viewModelScope.launch(handler) {
+            val character = withContext(Dispatchers.IO) {
+                charactersRepository
+                    .getCharacter(id)
+            }
+            handleCharacter(character)
+        }
     }
 
-    override fun onCleared() {
-        disposable.dispose()
-    }
-
-    private fun handleNext(breakingBadCharacter: BreakingBadCharacter?) {
+    private fun handleCharacter(breakingBadCharacter: BreakingBadCharacter?) {
         breakingBadCharacter?.let {
-            birthday.value = "Birthday: ${breakingBadCharacter.birthday}"
-            image.value = breakingBadCharacter.image
-            name.value = breakingBadCharacter.name
-            nickname.value = "Nickname: ${breakingBadCharacter.nickname}"
-            status.value = "Status: ${breakingBadCharacter.status}"
+            birthday.value = "Birthday: ${it.birthday}"
+            image.value = it.image
+            name.value = it.name
+            nickname.value = "Nickname: ${it.nickname}"
+            status.value = "Status: ${it.status}"
         }
     }
 

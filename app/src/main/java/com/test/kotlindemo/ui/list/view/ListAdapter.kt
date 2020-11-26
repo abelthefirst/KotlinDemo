@@ -6,7 +6,6 @@ import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.test.kotlindemo.databinding.LayoutItemBinding
 import com.test.kotlindemo.ui.list.viewmodel.ListItemViewModel
 

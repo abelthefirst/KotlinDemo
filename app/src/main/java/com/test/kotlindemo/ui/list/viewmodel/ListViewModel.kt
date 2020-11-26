@@ -4,32 +4,35 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.test.core.data.repository.CharactersRepository
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ListViewModel(charactersRepository: CharactersRepository, context: Context, private val navHostController: NavHostController) : ViewModel() {
 
     val list = MutableLiveData<List<ListItemViewModel>>()
 
-    private val disposable: Disposable
-
     init {
-        disposable = charactersRepository.getCharacters()
-            .map { it.map { breakingBadCharacter -> ListItemViewModel(breakingBadCharacter, navHostController) } }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                list.value = it
-            }, {
-                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
-            })
-    }
-
-    override fun onCleared() {
-        disposable.dispose()
+        val handler = CoroutineExceptionHandler { _, exception ->
+            Toast.makeText(context, exception.message, Toast.LENGTH_SHORT).show()
+        }
+        viewModelScope.launch(handler) {
+            val characters = withContext(Dispatchers.IO) {
+                charactersRepository
+                    .getCharacters()
+                    .map { breakingBadCharacter ->
+                        ListItemViewModel(
+                            breakingBadCharacter,
+                            navHostController
+                        )
+                    }
+            }
+            list.value = characters
+        }
     }
 
 }
