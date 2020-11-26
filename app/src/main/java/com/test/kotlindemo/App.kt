@@ -33,7 +33,7 @@ class App : Application() {
 
     private val repositoryModule = module {
 
-        single { CharactersRepositoryImpl(
+        single<CharactersRepository> { CharactersRepositoryImpl(
             LocalStorageCharactersServiceImpl(
                 BreakingBadCharactersRoomDatabase.get(get()),
                 BreakingBadCharacterEntityMapper()
@@ -41,7 +41,7 @@ class App : Application() {
             NetworkCharactersServiceImpl(
                 RetrofitBreakingBadApiFactory().build(),
                 RetrofitBreakingBadCharacterMapper())
-        ) as CharactersRepository }
+        ) }
 
     }
 
