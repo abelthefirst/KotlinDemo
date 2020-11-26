@@ -1,4 +1,5 @@
 # Kotlin demo
+![Master branch](https://github.com/abelthefirst/KotlinDemo/workflows/Build%20debug%20APK/badge.svg)
 
 ## General description
 
