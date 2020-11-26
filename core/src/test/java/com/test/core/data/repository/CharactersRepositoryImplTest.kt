@@ -2,7 +2,6 @@ package com.test.core.data.repository
 
 import com.test.core.service.LocalStorageCharactersService
 import com.test.core.service.NetworkCharactersService
-import io.reactivex.Flowable
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito
@@ -18,12 +17,12 @@ class CharactersRepositoryImplTest {
     @Test
     fun test_getCharacter_fromNetwork() {
         val characterEntity = createCharacter()
-        Mockito.`when`(localStorageService.getCharacter(characterEntity.id)).thenReturn(Flowable.fromCallable { emptyList<BreakingBadCharacter>() })
-        Mockito.`when`(networkCharactersService.getCharacter(characterEntity.id)).thenReturn(Flowable.fromCallable { characterEntity })
+        Mockito.`when`(localStorageService.getCharacter(characterEntity.id)).thenReturn(null)
+        Mockito.`when`(networkCharactersService.getCharacter(characterEntity.id)).thenReturn(characterEntity)
 
         val character = charactersRepositoryImpl.getCharacter(characterEntity.id)
 
-        Assert.assertEquals(characterEntity, character.blockingFirst())
+        Assert.assertEquals(characterEntity, character)
 
         Mockito.verify(localStorageService).setCharacter(characterEntity)
     }
@@ -31,12 +30,11 @@ class CharactersRepositoryImplTest {
     @Test
     fun test_getCharacter_fromLocalStorage() {
         val characterEntity = createCharacter()
-        val localStorageCharacters = listOf(characterEntity)
-        Mockito.`when`(localStorageService.getCharacter(characterEntity.id)).thenReturn(Flowable.fromCallable { localStorageCharacters })
+        Mockito.`when`(localStorageService.getCharacter(characterEntity.id)).thenReturn(characterEntity)
 
         val character = charactersRepositoryImpl.getCharacter(characterEntity.id)
 
-        Assert.assertEquals(characterEntity, character.blockingFirst())
+        Assert.assertEquals(characterEntity, character)
 
         Mockito.verifyZeroInteractions(networkCharactersService)
     }
@@ -44,14 +42,13 @@ class CharactersRepositoryImplTest {
     @Test
     fun test_getCharacter_fromMemory() {
         val characterEntity = createCharacter()
-        val localStorageCharacters = listOf(characterEntity)
-        Mockito.`when`(localStorageService.getCharacter(characterEntity.id)).thenReturn(Flowable.fromCallable { localStorageCharacters })
-        charactersRepositoryImpl.getCharacter(characterEntity.id).blockingFirst()
+        Mockito.`when`(localStorageService.getCharacter(characterEntity.id)).thenReturn(characterEntity)
+        charactersRepositoryImpl.getCharacter(characterEntity.id)
         Mockito.reset(localStorageService)
 
         val character = charactersRepositoryImpl.getCharacter(characterEntity.id)
 
-        Assert.assertEquals(characterEntity, character.blockingFirst())
+        Assert.assertEquals(characterEntity, character)
 
         Mockito.verifyZeroInteractions(localStorageService)
         Mockito.verifyZeroInteractions(networkCharactersService)
@@ -60,12 +57,12 @@ class CharactersRepositoryImplTest {
     @Test
     fun test_getCharacters_fromNetwork() {
         val networkCharacters = listOf(createCharacter())
-        Mockito.`when`(localStorageService.getCharacters()).thenReturn(Flowable.fromCallable { emptyList<BreakingBadCharacter>() })
-        Mockito.`when`(networkCharactersService.getCharacters()).thenReturn(Flowable.fromCallable { networkCharacters })
+        Mockito.`when`(localStorageService.getCharacters()).thenReturn(emptyList<BreakingBadCharacter>())
+        Mockito.`when`(networkCharactersService.getCharacters()).thenReturn(networkCharacters)
 
         val characters = charactersRepositoryImpl.getCharacters()
 
-        Assert.assertEquals(networkCharacters, characters.blockingFirst())
+        Assert.assertEquals(networkCharacters, characters)
 
         Mockito.verify(localStorageService).setCharacters(networkCharacters)
     }
@@ -73,11 +70,11 @@ class CharactersRepositoryImplTest {
     @Test
     fun test_getCharacters_fromLocalStorage() {
         val localStorageCharacters = listOf(createCharacter())
-        Mockito.`when`(localStorageService.getCharacters()).thenReturn(Flowable.fromCallable { localStorageCharacters })
+        Mockito.`when`(localStorageService.getCharacters()).thenReturn(localStorageCharacters)
 
         val characters = charactersRepositoryImpl.getCharacters()
 
-        Assert.assertEquals(localStorageCharacters, characters.blockingFirst())
+        Assert.assertEquals(localStorageCharacters, characters)
 
         Mockito.verifyZeroInteractions(networkCharactersService)
     }
@@ -85,13 +82,13 @@ class CharactersRepositoryImplTest {
     @Test
     fun test_getCharacters_fromMemory() {
         val localStorageCharacters = listOf(createCharacter())
-        Mockito.`when`(localStorageService.getCharacters()).thenReturn(Flowable.fromCallable { localStorageCharacters })
-        charactersRepositoryImpl.getCharacters().blockingFirst()
+        Mockito.`when`(localStorageService.getCharacters()).thenReturn(localStorageCharacters)
+        charactersRepositoryImpl.getCharacters()
         Mockito.reset(localStorageService)
 
         val characters = charactersRepositoryImpl.getCharacters()
 
-        Assert.assertEquals(localStorageCharacters, characters.blockingFirst())
+        Assert.assertEquals(localStorageCharacters, characters)
 
         Mockito.verifyZeroInteractions(localStorageService)
         Mockito.verifyZeroInteractions(networkCharactersService)
@@ -101,13 +98,13 @@ class CharactersRepositoryImplTest {
     fun test_getCharacter_after_getCharacters() {
         val characterEntity = createCharacter()
         val localStorageCharacters = listOf(characterEntity)
-        Mockito.`when`(localStorageService.getCharacters()).thenReturn(Flowable.fromCallable { localStorageCharacters })
-        charactersRepositoryImpl.getCharacters().blockingFirst()
+        Mockito.`when`(localStorageService.getCharacters()).thenReturn(localStorageCharacters)
+        charactersRepositoryImpl.getCharacters()
         Mockito.reset(localStorageService)
 
         val character = charactersRepositoryImpl.getCharacter(characterEntity.id)
 
-        Assert.assertEquals(characterEntity, character.blockingFirst())
+        Assert.assertEquals(characterEntity, character)
 
         Mockito.verifyZeroInteractions(localStorageService)
         Mockito.verifyZeroInteractions(networkCharactersService)

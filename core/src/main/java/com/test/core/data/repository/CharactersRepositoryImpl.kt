@@ -5,7 +5,6 @@ import com.test.core.service.NetworkCharactersService
 import com.test.core.data.repository.strategies.localstorage.LocalStorageCharactersRepositoryStrategy
 import com.test.core.data.repository.strategies.memory.MemoryCharactersRepositoryStrategy
 import com.test.core.data.repository.strategies.network.NetworkCharactersRepositoryStrategy
-import io.reactivex.Flowable
 
 class CharactersRepositoryImpl(
     localStorageService: LocalStorageCharactersService,
@@ -22,8 +21,8 @@ class CharactersRepositoryImpl(
         upstream = memoryStrategy
     }
 
-    override fun getCharacter(id: Int): Flowable<BreakingBadCharacter?> = upstream.getCharacter(id)
+    override fun getCharacter(id: Int): BreakingBadCharacter? = upstream.getCharacter(id)
 
-    override fun getCharacters(): Flowable<List<BreakingBadCharacter>> = upstream.getCharacters()
+    override fun getCharacters(): List<BreakingBadCharacter> = upstream.getCharacters()
 
 }
