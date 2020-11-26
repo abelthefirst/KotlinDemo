@@ -21,8 +21,11 @@ Every data layer (memory cache, persistent storage and network) uses its own dat
 
 ## Used libraries
 
-- AndroidX
+- AndroidX (UI, Room, ViewModels)
 - [Glide](https://github.com/bumptech/glide)
 - [Koin](https://insert-koin.io/)
-- [Reactive Streams](http://www.reactive-streams.org/)
 - [Retrofit](https://github.com/square/retrofit)
+
+## Branches
+ - master branch contains an implementation based on Kotlin coroutines
+ - rxjava in turn uses [Reactive Streams](http://www.reactive-streams.org/)
