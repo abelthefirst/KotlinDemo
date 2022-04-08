@@ -7,8 +7,8 @@ import com.test.core.data.repository.CharactersRepositoryStrategy
 class NetworkCharactersRepositoryStrategy(private val networkCharactersService: NetworkCharactersService) :
     CharactersRepositoryStrategy {
 
-    override fun getCharacter(id: Int): BreakingBadCharacter? = networkCharactersService.getCharacter(id)
+    override suspend fun getCharacter(id: Int): BreakingBadCharacter? = networkCharactersService.getCharacter(id)
 
-    override fun getCharacters(): List<BreakingBadCharacter> = networkCharactersService.getCharacters()
+    override suspend fun getCharacters(): List<BreakingBadCharacter> = networkCharactersService.getCharacters()
 
 }

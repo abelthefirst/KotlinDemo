@@ -8,7 +8,7 @@ class MemoryCharactersRepositoryStrategy(private val upstream: CharactersReposit
 
     private val characterMap: MutableMap<Int, BreakingBadCharacter> = mutableMapOf()
 
-    override fun getCharacter(id: Int): BreakingBadCharacter? {
+    override suspend fun getCharacter(id: Int): BreakingBadCharacter? {
         if (!isEmpty() && characterMap.containsKey(id)) {
             return characterMap[id]
         }
@@ -16,7 +16,7 @@ class MemoryCharactersRepositoryStrategy(private val upstream: CharactersReposit
         return upstream.getCharacter(id)?.also { characterMap[it.id] = it }
     }
 
-    override fun getCharacters(): List<BreakingBadCharacter> {
+    override suspend fun getCharacters(): List<BreakingBadCharacter> {
         if (!isEmpty()) {
             return characterMap.values.sortedBy { it.id }
         }

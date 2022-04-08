@@ -2,8 +2,8 @@ package com.test.core.data.repository
 
 interface CharactersRepositoryStrategy {
 
-    fun getCharacter(id: Int): BreakingBadCharacter?
+    suspend fun getCharacter(id: Int): BreakingBadCharacter?
 
-    fun getCharacters(): List<BreakingBadCharacter>
+    suspend fun getCharacters(): List<BreakingBadCharacter>
 
 }

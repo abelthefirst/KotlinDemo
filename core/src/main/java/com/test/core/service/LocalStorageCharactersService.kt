@@ -4,13 +4,13 @@ import com.test.core.data.repository.BreakingBadCharacter
 
 interface LocalStorageCharactersService {
 
-    fun getCharacter(id: Int): BreakingBadCharacter?
+    suspend fun getCharacter(id: Int): BreakingBadCharacter?
 
-    fun getCharacters(): List<BreakingBadCharacter>
+    suspend fun getCharacters(): List<BreakingBadCharacter>
 
-    fun setCharacter(breakingBadCharacter: BreakingBadCharacter)
+    suspend fun setCharacter(breakingBadCharacter: BreakingBadCharacter)
 
-    fun setCharacters(breakingBadCharacters: List<BreakingBadCharacter>) {
+    suspend fun setCharacters(breakingBadCharacters: List<BreakingBadCharacter>) {
         breakingBadCharacters.forEach { setCharacter(it) }
     }
 

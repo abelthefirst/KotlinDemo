@@ -9,12 +9,12 @@ class LocalStorageCharactersRepositoryStrategy(
     private val upstream: CharactersRepositoryStrategy
 ) : CharactersRepositoryStrategy {
 
-    override fun getCharacter(id: Int): BreakingBadCharacter? {
+    override suspend fun getCharacter(id: Int): BreakingBadCharacter? {
         return localStorageCharactersService.getCharacter(id) ?:
             upstream.getCharacter(id)?.also { localStorageCharactersService.setCharacter(it) }
     }
 
-    override fun getCharacters(): List<BreakingBadCharacter> {
+    override suspend fun getCharacters(): List<BreakingBadCharacter> {
         var characterList = localStorageCharactersService.getCharacters()
         if (characterList.isEmpty()) {
             characterList = upstream.getCharacters().also { localStorageCharactersService.setCharacters(it) }

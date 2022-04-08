@@ -9,12 +9,12 @@ import androidx.room.Query
 interface BreakingBadCharacterDao {
 
     @Query("SELECT * FROM characters WHERE id = :id")
-    fun getCharacter(id: Int): List<BreakingBadCharacterEntity>
+    suspend fun getCharacter(id: Int): List<BreakingBadCharacterEntity>
 
     @Query("SELECT * FROM characters")
-    fun getCharacters(): List<BreakingBadCharacterEntity>
+    suspend fun getCharacters(): List<BreakingBadCharacterEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun setCharacter(breakingBadCharacterDao: BreakingBadCharacterEntity?)
+    suspend fun setCharacter(breakingBadCharacterDao: BreakingBadCharacterEntity?)
 
 }
