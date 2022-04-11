@@ -22,12 +22,18 @@ class NetworkCharactersServiceImpl(
     }
 
     override fun getCharacters(): List<BreakingBadCharacter> {
-        val response = retrofitBreakingBadApi.getCharacters().execute()
+        val response = retrofitBreakingBadApi.getCharacters(offset = 0, pageSize = PAGE_SIZE).execute()
         if (response.isSuccessful) {
             return response.body()!!.map { retrofitBreakingBadCharacterMapper.map(it) }
         } else {
             throw Exception(response.errorBody()?.string())
         }
+    }
+
+    companion object {
+
+        private const val PAGE_SIZE = 5
+
     }
 
 }
