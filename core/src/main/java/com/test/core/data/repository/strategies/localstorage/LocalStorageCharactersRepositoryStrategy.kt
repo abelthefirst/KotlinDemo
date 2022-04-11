@@ -1,26 +1,25 @@
 package com.test.core.data.repository.strategies.localstorage
 
+import com.test.core.data.repository.BaseCharactersRepositoryStrategy
 import com.test.core.data.repository.BreakingBadCharacter
 import com.test.core.data.repository.CharactersRepositoryStrategy
 import com.test.core.service.LocalStorageCharactersService
 
-class LocalStorageCharactersRepositoryStrategy(
+internal class LocalStorageCharactersRepositoryStrategy(
     private val localStorageCharactersService: LocalStorageCharactersService,
-    private val upstream: CharactersRepositoryStrategy
-) : CharactersRepositoryStrategy {
+    override val upstream: CharactersRepositoryStrategy
+) : BaseCharactersRepositoryStrategy() {
 
-    override suspend fun getCharacter(id: Int): BreakingBadCharacter? {
-        return localStorageCharactersService.getCharacter(id) ?:
-            upstream.getCharacter(id)?.also { localStorageCharactersService.setCharacter(it) }
+    override fun loadCharacter(id: Int) = localStorageCharactersService.getCharacter(id)
+
+    override fun loadCharacters() = localStorageCharactersService.getCharacters()
+
+    override fun setCharacter(character: BreakingBadCharacter) {
+        localStorageCharactersService.setCharacter(character)
     }
 
-    override suspend fun getCharacters(): List<BreakingBadCharacter> {
-        var characterList = localStorageCharactersService.getCharacters()
-        if (characterList.isEmpty()) {
-            characterList = upstream.getCharacters().also { localStorageCharactersService.setCharacters(it) }
-        }
-
-        return characterList
+    override fun setCharacters(characters: List<BreakingBadCharacter>) {
+        localStorageCharactersService.setCharacters(characters)
     }
 
 }

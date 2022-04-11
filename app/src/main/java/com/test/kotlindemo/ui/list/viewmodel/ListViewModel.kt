@@ -24,6 +24,7 @@ class ListViewModel(charactersRepository: CharactersRepository, context: Context
             val characters = withContext(Dispatchers.IO) {
                 charactersRepository
                     .getCharacters()
+                    .characters
                     .map { breakingBadCharacter ->
                         ListItemViewModel(
                             breakingBadCharacter,

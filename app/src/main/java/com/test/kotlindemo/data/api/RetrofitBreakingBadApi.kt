@@ -1,14 +1,15 @@
 package com.test.kotlindemo.data.api
 
+import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface RetrofitBreakingBadApi {
 
     @GET("characters")
-    suspend fun getCharacters(): List<RetrofitBreakingBadCharacter>
+    fun getCharacters(): Call<List<RetrofitBreakingBadCharacter>>
 
     @GET("characters/{id}")
-    suspend fun getCharacter(@Path("id") id: Int): List<RetrofitBreakingBadCharacter>
+    fun getCharacter(@Path("id") id: Int): Call<List<RetrofitBreakingBadCharacter>>
 
 }

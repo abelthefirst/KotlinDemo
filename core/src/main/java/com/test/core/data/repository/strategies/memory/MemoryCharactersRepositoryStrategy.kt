@@ -1,29 +1,23 @@
 package com.test.core.data.repository.strategies.memory
 
+import com.test.core.data.repository.BaseCharactersRepositoryStrategy
 import com.test.core.data.repository.BreakingBadCharacter
 import com.test.core.data.repository.CharactersRepositoryStrategy
 
-class MemoryCharactersRepositoryStrategy(private val upstream: CharactersRepositoryStrategy) :
-    CharactersRepositoryStrategy {
+internal class MemoryCharactersRepositoryStrategy(override val upstream: CharactersRepositoryStrategy) :
+    BaseCharactersRepositoryStrategy() {
 
     private val characterMap: MutableMap<Int, BreakingBadCharacter> = mutableMapOf()
 
-    override suspend fun getCharacter(id: Int): BreakingBadCharacter? {
-        if (!isEmpty() && characterMap.containsKey(id)) {
-            return characterMap[id]
-        }
+    override fun loadCharacter(id: Int) = characterMap[id]
 
-        return upstream.getCharacter(id)?.also { characterMap[it.id] = it }
+    override fun loadCharacters() = characterMap.values.toList()
+
+    override fun setCharacter(character: BreakingBadCharacter) {
+        characterMap[character.id] = character
     }
 
-    override suspend fun getCharacters(): List<BreakingBadCharacter> {
-        if (!isEmpty()) {
-            return characterMap.values.sortedBy { it.id }
-        }
-
-        return upstream.getCharacters().also { characters -> characterMap.putAll(characters.map { Pair(it.id, it) }) }
-    }
-
-    private fun isEmpty(): Boolean = characterMap.isEmpty()
+    override fun setCharacters(characters: List<BreakingBadCharacter>) = characterMap
+        .putAll(characters.map { Pair(it.id, it) })
 
 }

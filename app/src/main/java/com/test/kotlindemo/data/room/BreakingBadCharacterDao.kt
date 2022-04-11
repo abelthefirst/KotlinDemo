@@ -8,13 +8,19 @@ import androidx.room.Query
 @Dao
 interface BreakingBadCharacterDao {
 
+    @Query("SELECT COUNT(1) FROM characters WHERE id = :id")
+    fun contains(id: Int): Boolean
+
     @Query("SELECT * FROM characters WHERE id = :id")
-    suspend fun getCharacter(id: Int): List<BreakingBadCharacterEntity>
+    fun getCharacter(id: Int): List<BreakingBadCharacterEntity>
 
     @Query("SELECT * FROM characters")
-    suspend fun getCharacters(): List<BreakingBadCharacterEntity>
+    fun getCharacters(): List<BreakingBadCharacterEntity>
+
+    @Query("SELECT COUNT(1) FROM characters")
+    fun isNotEmpty(): Boolean
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun setCharacter(breakingBadCharacterDao: BreakingBadCharacterEntity?)
+    fun setCharacter(breakingBadCharacterDao: BreakingBadCharacterEntity?)
 
 }

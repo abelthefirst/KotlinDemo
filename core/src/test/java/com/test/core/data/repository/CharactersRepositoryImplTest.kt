@@ -2,7 +2,6 @@ package com.test.core.data.repository
 
 import com.test.core.service.LocalStorageCharactersService
 import com.test.core.service.NetworkCharactersService
-import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito
@@ -16,7 +15,7 @@ class CharactersRepositoryImplTest {
     private val charactersRepositoryImpl = CharactersRepositoryImpl(localStorageService, networkCharactersService)
 
     @Test
-    fun test_getCharacter_fromNetwork() = runBlocking {
+    fun test_getCharacter_fromNetwork() {
         val characterEntity = createCharacter()
         Mockito.`when`(localStorageService.getCharacter(characterEntity.id)).thenReturn(null)
         Mockito.`when`(networkCharactersService.getCharacter(characterEntity.id)).thenReturn(characterEntity)
@@ -29,7 +28,7 @@ class CharactersRepositoryImplTest {
     }
 
     @Test
-    fun test_getCharacter_fromLocalStorage() = runBlocking {
+    fun test_getCharacter_fromLocalStorage() {
         val characterEntity = createCharacter()
         Mockito.`when`(localStorageService.getCharacter(characterEntity.id)).thenReturn(characterEntity)
 
@@ -41,7 +40,7 @@ class CharactersRepositoryImplTest {
     }
 
     @Test
-    fun test_getCharacter_fromMemory() = runBlocking {
+    fun test_getCharacter_fromMemory() {
         val characterEntity = createCharacter()
         Mockito.`when`(localStorageService.getCharacter(characterEntity.id)).thenReturn(characterEntity)
         charactersRepositoryImpl.getCharacter(characterEntity.id)
@@ -56,32 +55,32 @@ class CharactersRepositoryImplTest {
     }
 
     @Test
-    fun test_getCharacters_fromNetwork() = runBlocking {
+    fun test_getCharacters_fromNetwork() {
         val networkCharacters = listOf(createCharacter())
         Mockito.`when`(localStorageService.getCharacters()).thenReturn(emptyList<BreakingBadCharacter>())
         Mockito.`when`(networkCharactersService.getCharacters()).thenReturn(networkCharacters)
 
         val characters = charactersRepositoryImpl.getCharacters()
 
-        Assert.assertEquals(networkCharacters, characters)
+        Assert.assertEquals(networkCharacters, characters.characters)
 
         Mockito.verify(localStorageService).setCharacters(networkCharacters)
     }
 
     @Test
-    fun test_getCharacters_fromLocalStorage() = runBlocking {
+    fun test_getCharacters_fromLocalStorage() {
         val localStorageCharacters = listOf(createCharacter())
         Mockito.`when`(localStorageService.getCharacters()).thenReturn(localStorageCharacters)
 
         val characters = charactersRepositoryImpl.getCharacters()
 
-        Assert.assertEquals(localStorageCharacters, characters)
+        Assert.assertEquals(localStorageCharacters, characters.characters)
 
         Mockito.verifyNoInteractions(networkCharactersService)
     }
 
     @Test
-    fun test_getCharacters_fromMemory() = runBlocking {
+    fun test_getCharacters_fromMemory() {
         val localStorageCharacters = listOf(createCharacter())
         Mockito.`when`(localStorageService.getCharacters()).thenReturn(localStorageCharacters)
         charactersRepositoryImpl.getCharacters()
@@ -89,14 +88,14 @@ class CharactersRepositoryImplTest {
 
         val characters = charactersRepositoryImpl.getCharacters()
 
-        Assert.assertEquals(localStorageCharacters, characters)
+        Assert.assertEquals(localStorageCharacters, characters.characters)
 
         Mockito.verifyNoInteractions(localStorageService)
         Mockito.verifyNoInteractions(networkCharactersService)
     }
 
     @Test
-    fun test_getCharacter_after_getCharacters() = runBlocking {
+    fun test_getCharacter_after_getCharacters() {
         val characterEntity = createCharacter()
         val localStorageCharacters = listOf(characterEntity)
         Mockito.`when`(localStorageService.getCharacters()).thenReturn(localStorageCharacters)

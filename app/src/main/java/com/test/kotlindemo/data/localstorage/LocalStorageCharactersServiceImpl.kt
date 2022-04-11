@@ -9,7 +9,7 @@ class LocalStorageCharactersServiceImpl(
     private val breakingBadCharacterEntityMapper: BreakingBadCharacterEntityMapper):
     LocalStorageCharactersService {
 
-    override suspend fun getCharacter(id: Int): BreakingBadCharacter? {
+    override fun getCharacter(id: Int): BreakingBadCharacter? {
         return breakingBadCharactersRoomDatabase
             .breakingBadCharacterDao()
             .getCharacter(id)
@@ -17,12 +17,17 @@ class LocalStorageCharactersServiceImpl(
             .firstOrNull()
     }
 
-    override suspend fun getCharacters(): List<BreakingBadCharacter> {
-        return breakingBadCharactersRoomDatabase.breakingBadCharacterDao().getCharacters().map { breakingBadCharacterEntityMapper.map(it) }
+    override fun getCharacters(): List<BreakingBadCharacter> {
+        return breakingBadCharactersRoomDatabase
+            .breakingBadCharacterDao()
+            .getCharacters()
+            .map { breakingBadCharacterEntityMapper.map(it) }
     }
 
-    override suspend fun setCharacter(breakingBadCharacter: BreakingBadCharacter) {
-        breakingBadCharactersRoomDatabase.breakingBadCharacterDao().setCharacter(breakingBadCharacterEntityMapper.map(breakingBadCharacter))
+    override fun setCharacter(breakingBadCharacter: BreakingBadCharacter) {
+        breakingBadCharactersRoomDatabase
+            .breakingBadCharacterDao()
+            .setCharacter(breakingBadCharacterEntityMapper.map(breakingBadCharacter))
     }
 
 }

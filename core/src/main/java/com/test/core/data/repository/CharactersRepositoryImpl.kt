@@ -21,8 +21,8 @@ class CharactersRepositoryImpl(
         upstream = memoryStrategy
     }
 
-    override suspend fun getCharacter(id: Int): BreakingBadCharacter? = upstream.getCharacter(id)
+    override fun getCharacter(id: Int): BreakingBadCharacter? = upstream.getCharacter(id)
 
-    override suspend fun getCharacters(): List<BreakingBadCharacter> = upstream.getCharacters()
+    override fun getCharacters(): BreakingBadCharacterListResult = upstream.getCharacters()
 
 }
