@@ -4,6 +4,8 @@ import com.test.core.data.repository.BreakingBadCharacter
 
 interface LocalStorageCharactersService {
 
+    fun clearCharacters()
+
     fun getCharacter(id: Int): BreakingBadCharacter?
 
     fun getCharacters(): List<BreakingBadCharacter>

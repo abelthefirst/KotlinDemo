@@ -6,6 +6,6 @@ interface NetworkCharactersService {
 
     fun getCharacter(id: Int): BreakingBadCharacter?
 
-    fun getCharacters(): List<BreakingBadCharacter>
+    fun getCharacters(offset: Int, pageSize: Int): List<BreakingBadCharacter>
 
 }

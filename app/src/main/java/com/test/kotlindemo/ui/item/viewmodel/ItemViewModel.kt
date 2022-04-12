@@ -1,7 +1,5 @@
 package com.test.kotlindemo.ui.item.viewmodel
 
-import android.content.Context
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +10,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ItemViewModel(charactersRepository: CharactersRepository, context: Context, id: Int) : ViewModel() {
+class ItemViewModel(
+    throwablePresenter: (Throwable) -> Unit,
+    charactersRepository: CharactersRepository,
+    id: Int
+) : ViewModel() {
 
     val birthday = MutableLiveData<String>()
 
@@ -26,7 +28,7 @@ class ItemViewModel(charactersRepository: CharactersRepository, context: Context
 
     init {
         val handler = CoroutineExceptionHandler { _, exception ->
-            Toast.makeText(context, exception.message, Toast.LENGTH_SHORT).show()
+            throwablePresenter.invoke(exception)
         }
         viewModelScope.launch(handler) {
             val character = withContext(Dispatchers.IO) {

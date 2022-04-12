@@ -11,18 +11,49 @@ class CharactersRepositoryImpl(
     networkCharactersService: NetworkCharactersService
 ) : CharactersRepository {
 
-    private val upstream: CharactersRepositoryStrategy
+    private val upstreamStrategy: CharactersRepositoryStrategy
+
+    private var hasMore: Boolean = true
+    private var offset: Int = 0
 
     init {
         val networkStrategy = NetworkCharactersRepositoryStrategy(networkCharactersService)
         val localStorageStrategy = LocalStorageCharactersRepositoryStrategy(localStorageService, networkStrategy)
         val memoryStrategy = MemoryCharactersRepositoryStrategy(localStorageStrategy)
 
-        upstream = memoryStrategy
+        upstreamStrategy = memoryStrategy
     }
 
-    override fun getCharacter(id: Int): BreakingBadCharacter? = upstream.getCharacter(id)
+    override fun getCharacter(id: Int): BreakingBadCharacter? = upstreamStrategy.getCharacter(id)
 
-    override fun getCharacters(): BreakingBadCharacterListResult = upstream.getCharacters()
+    override fun getCharacters(): BreakingBadCharacterListResult = upstreamStrategy.getCharacters().also {
+        it.updateRepositoryState()
+    }
+
+    override fun getMoreCharacters(): BreakingBadCharacterListResult {
+        if (!hasMore) {
+            throw IllegalStateException("There are no more items in the repository")
+        }
+
+        return upstreamStrategy.getCharacters(offset).also {
+            it.updateRepositoryState()
+        }
+    }
+
+    override fun refreshCharacters(): BreakingBadCharacterListResult {
+        upstreamStrategy.clearCharacters()
+
+        hasMore = true
+        offset = 0
+
+        return getMoreCharacters()
+    }
+
+    private fun BreakingBadCharacterListResult.updateRepositoryState() {
+        this@CharactersRepositoryImpl.hasMore = hasMore
+        if (characters.isNotEmpty()) {
+            this@CharactersRepositoryImpl.offset = characters.last().id
+        }
+    }
 
 }

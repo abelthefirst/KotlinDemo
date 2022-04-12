@@ -1,39 +1,84 @@
 package com.test.kotlindemo.ui.list.viewmodel
 
-import android.content.Context
-import android.widget.Toast
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.test.core.data.repository.BreakingBadCharacterListResult
 import com.test.core.data.repository.CharactersRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ListViewModel(charactersRepository: CharactersRepository, context: Context, private val navHostController: NavHostController) : ViewModel() {
+class ListViewModel(
+    throwablePresenter: (Throwable) -> Unit,
+    private val charactersRepository: CharactersRepository,
+    private val navHostController: NavHostController
+) : ViewModel() {
 
-    val list = MutableLiveData<List<ListItemViewModel>>()
+    private val _isRefreshingCharacters = MutableLiveData<Boolean>()
+    val isRefreshingCharacters: LiveData<Boolean> = _isRefreshingCharacters
 
-    init {
-        val handler = CoroutineExceptionHandler { _, exception ->
-            Toast.makeText(context, exception.message, Toast.LENGTH_SHORT).show()
-        }
-        viewModelScope.launch(handler) {
+    private val _list = MutableLiveData<List<AbstractListItemViewModel>>()
+    val list: LiveData<List<AbstractListItemViewModel>> = _list
+
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+        _isRefreshingCharacters.value = false
+
+        throwablePresenter.invoke(exception)
+    }
+
+    fun getCharacters() {
+        viewModelScope.launch(coroutineExceptionHandler) {
             val characters = withContext(Dispatchers.IO) {
                 charactersRepository
                     .getCharacters()
-                    .characters
-                    .map { breakingBadCharacter ->
-                        ListItemViewModel(
-                            breakingBadCharacter,
-                            navHostController
-                        )
-                    }
+                    .toViewModelList()
             }
-            list.value = characters
+            _list.value = characters
         }
+    }
+
+    fun getMoreCharacters() {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val characters = withContext(Dispatchers.IO) {
+                charactersRepository
+                    .getMoreCharacters()
+                    .toViewModelList()
+            }
+            _list.value = _list.value!!.toMutableList().filterIsInstance<AbstractListItemViewModel.ListItemViewModel>() + characters
+        }
+    }
+
+    fun refreshCharacters() {
+        _isRefreshingCharacters.value = true
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val characters = withContext(Dispatchers.IO) {
+                charactersRepository
+                    .refreshCharacters()
+                    .toViewModelList()
+            }
+            _list.value = characters
+            _isRefreshingCharacters.value = false
+        }
+    }
+
+    private fun BreakingBadCharacterListResult.toViewModelList(): List<AbstractListItemViewModel> {
+        val viewModelList: MutableList<AbstractListItemViewModel> = characters
+            .map { breakingBadCharacter ->
+                AbstractListItemViewModel.ListItemViewModel(
+                    breakingBadCharacter,
+                    navHostController
+                )
+            }
+            .toMutableList()
+        if (hasMore) {
+            viewModelList.add(AbstractListItemViewModel.LoadingListItemViewModel)
+        }
+
+        return viewModelList
     }
 
 }

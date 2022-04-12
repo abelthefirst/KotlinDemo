@@ -2,7 +2,7 @@
 <layout>
 
     <data>
-        <variable name="viewModel" type="com.test.kotlindemo.ui.list.viewmodel.ListItemViewModel" />
+        <variable name="viewModel" type="com.test.kotlindemo.ui.list.viewmodel.AbstractListItemViewModel.ListItemViewModel" />
     </data>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"

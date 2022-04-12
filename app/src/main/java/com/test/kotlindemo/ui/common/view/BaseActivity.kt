@@ -12,21 +12,21 @@ import com.test.kotlindemo.R
 
 abstract class BaseActivity<B: ViewDataBinding, VM: ViewModel> : AppCompatActivity() {
 
-    protected var binding: B? = null
+    protected lateinit var binding: B
 
-    protected var navHostController: NavHostController? = null
+    protected lateinit var navHostController: NavHostController
 
-    protected var viewModel: VM? = null
+    protected lateinit var viewModel: VM
 
     override fun onCreate(savedInstanceState: Bundle?) {
         navHostController = initNavigation()
 
         super.onCreate(savedInstanceState)
 
-        viewModel = obtainViewModel()
         binding = createBinding()
-        binding?.lifecycleOwner = this
-        binding?.setVariable(BR.viewModel, viewModel)
+        binding.lifecycleOwner = this
+        viewModel = obtainViewModel()
+        binding.setVariable(BR.viewModel, viewModel)
     }
 
     protected abstract fun getLayoutId(): Int

@@ -1,6 +1,7 @@
 package com.test.kotlindemo
 
 import android.app.Application
+import android.widget.Toast
 import androidx.navigation.NavHostController
 import com.test.core.data.repository.CharactersRepository
 import com.test.core.data.repository.CharactersRepositoryImpl
@@ -21,12 +22,24 @@ class App : Application() {
 
     private val viewModelModule = module {
 
-        viewModel {
-                (navHostController: NavHostController) -> ListViewModel(get(), get(), navHostController)
+        val throwablePresenter: (Throwable) -> Unit = { throwable ->
+            Toast.makeText(applicationContext, throwable.message, Toast.LENGTH_SHORT).show()
         }
 
-        viewModel {
-                (id: Int) -> ItemViewModel(get(), get(), id)
+        viewModel { (navHostController: NavHostController) ->
+            ListViewModel(
+                throwablePresenter,
+                get(),
+                navHostController
+            )
+        }
+
+        viewModel { (id: Int) ->
+            ItemViewModel(
+                throwablePresenter,
+                get(),
+                id
+            )
         }
 
     }

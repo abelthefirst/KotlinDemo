@@ -4,6 +4,7 @@ import com.test.core.service.LocalStorageCharactersService
 import com.test.core.service.NetworkCharactersService
 import org.junit.Assert
 import org.junit.Test
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mockito
 
 class CharactersRepositoryImplTest {
@@ -57,8 +58,8 @@ class CharactersRepositoryImplTest {
     @Test
     fun test_getCharacters_fromNetwork() {
         val networkCharacters = listOf(createCharacter())
-        Mockito.`when`(localStorageService.getCharacters()).thenReturn(emptyList<BreakingBadCharacter>())
-        Mockito.`when`(networkCharactersService.getCharacters()).thenReturn(networkCharacters)
+        Mockito.`when`(localStorageService.getCharacters()).thenReturn(emptyList())
+        Mockito.`when`(networkCharactersService.getCharacters(anyInt(), anyInt())).thenReturn(networkCharacters)
 
         val characters = charactersRepositoryImpl.getCharacters()
 

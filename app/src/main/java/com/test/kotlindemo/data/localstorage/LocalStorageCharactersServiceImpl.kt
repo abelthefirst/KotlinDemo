@@ -9,6 +9,10 @@ class LocalStorageCharactersServiceImpl(
     private val breakingBadCharacterEntityMapper: BreakingBadCharacterEntityMapper):
     LocalStorageCharactersService {
 
+    override fun clearCharacters() = breakingBadCharactersRoomDatabase
+        .breakingBadCharacterDao()
+        .clearCharacters()
+
     override fun getCharacter(id: Int): BreakingBadCharacter? {
         return breakingBadCharactersRoomDatabase
             .breakingBadCharacterDao()

@@ -4,7 +4,6 @@ import android.content.res.Resources
 import com.test.core.data.repository.BreakingBadCharacter
 import com.test.core.service.NetworkCharactersService
 import com.test.kotlindemo.data.api.RetrofitBreakingBadApi
-import java.lang.Exception
 
 class NetworkCharactersServiceImpl(
     private val retrofitBreakingBadApi: RetrofitBreakingBadApi,
@@ -21,19 +20,13 @@ class NetworkCharactersServiceImpl(
         }
     }
 
-    override fun getCharacters(): List<BreakingBadCharacter> {
-        val response = retrofitBreakingBadApi.getCharacters(offset = 0, pageSize = PAGE_SIZE).execute()
+    override fun getCharacters(offset: Int, pageSize: Int): List<BreakingBadCharacter> {
+        val response = retrofitBreakingBadApi.getCharacters(offset = offset, pageSize = pageSize).execute()
         if (response.isSuccessful) {
             return response.body()!!.map { retrofitBreakingBadCharacterMapper.map(it) }
         } else {
             throw Exception(response.errorBody()?.string())
         }
-    }
-
-    companion object {
-
-        private const val PAGE_SIZE = 5
-
     }
 
 }

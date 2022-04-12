@@ -1,9 +1,13 @@
 package com.test.core.data.repository
 
-interface CharactersRepositoryStrategy {
+internal interface CharactersRepositoryStrategy {
+
+    fun clearCharacters()
 
     fun getCharacter(id: Int): BreakingBadCharacter?
 
     fun getCharacters(): BreakingBadCharacterListResult
+
+    fun getCharacters(offset: Int): BreakingBadCharacterListResult
 
 }

@@ -6,4 +6,8 @@ interface CharactersRepository {
 
     fun getCharacters(): BreakingBadCharacterListResult
 
+    fun getMoreCharacters(): BreakingBadCharacterListResult
+
+    fun refreshCharacters(): BreakingBadCharacterListResult
+
 }
