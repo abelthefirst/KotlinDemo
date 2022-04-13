@@ -48,7 +48,9 @@ class ListViewModel(
                     .getMoreCharacters()
                     .toViewModelList()
             }
-            _list.value = _list.value!!.toMutableList().filterIsInstance<AbstractListItemViewModel.ListItemViewModel>() + characters
+            _list.value = _list.value?.let {
+                it.toMutableList().filterIsInstance<AbstractListItemViewModel.ListItemViewModel>() + characters
+            }
         }
     }
 

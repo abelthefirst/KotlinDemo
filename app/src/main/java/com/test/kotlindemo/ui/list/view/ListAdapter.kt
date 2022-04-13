@@ -1,6 +1,5 @@
 package com.test.kotlindemo.ui.list.view
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,7 @@ fun setList(recyclerView: RecyclerView, list: List<AbstractListItemViewModel>?) 
     (recyclerView.adapter as? ListAdapter)?.submitList(list)
 }
 
-class ListAdapter(val listViewModel: ListViewModel) : androidx.recyclerview.widget.ListAdapter<AbstractListItemViewModel, ListAdapter.AbstractListItemViewHolder>(object: DiffUtil.ItemCallback<AbstractListItemViewModel>() {
+class ListAdapter(private val listViewModel: ListViewModel) : androidx.recyclerview.widget.ListAdapter<AbstractListItemViewModel, ListAdapter.AbstractListItemViewHolder>(object: DiffUtil.ItemCallback<AbstractListItemViewModel>() {
 
     override fun areContentsTheSame(oldItem: AbstractListItemViewModel, newItem: AbstractListItemViewModel): Boolean {
         if (oldItem is AbstractListItemViewModel.ListItemViewModel && newItem is AbstractListItemViewModel.ListItemViewModel) {
@@ -56,11 +55,7 @@ class ListAdapter(val listViewModel: ListViewModel) : androidx.recyclerview.widg
             is AbstractListItemViewHolder.ListItemViewHolder -> {
                 holder.bindViewModel(getItem(position) as AbstractListItemViewModel.ListItemViewModel)
             }
-            is AbstractListItemViewHolder.LoadingListItemViewHolder -> {
-                Log.d("Debug", "onBindViewHolder LoadingListItemViewHolder")
-
-                listViewModel.getMoreCharacters()
-            }
+            is AbstractListItemViewHolder.LoadingListItemViewHolder -> listViewModel.getMoreCharacters()
         }
     }
 
