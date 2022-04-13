@@ -1,5 +1,6 @@
 package com.test.core.data.repository
 
+import com.test.core.data.repository.strategies.CharactersRepositoryStrategy
 import com.test.core.service.LocalStorageCharactersService
 import com.test.core.service.NetworkCharactersService
 import com.test.core.data.repository.strategies.localstorage.LocalStorageCharactersRepositoryStrategy
@@ -51,9 +52,7 @@ class CharactersRepositoryImpl(
 
     private fun BreakingBadCharacterListResult.updateRepositoryState() {
         this@CharactersRepositoryImpl.hasMore = hasMore
-        if (characters.isNotEmpty()) {
-            this@CharactersRepositoryImpl.offset = characters.last().id
-        }
+        this@CharactersRepositoryImpl.offset += characters.size
     }
 
 }

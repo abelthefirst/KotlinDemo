@@ -1,11 +1,13 @@
 package com.test.core.data.repository.strategies.memory
 
-import com.test.core.data.repository.CharactersRepositoryStrategyWithAnUpstream
 import com.test.core.data.repository.BreakingBadCharacter
-import com.test.core.data.repository.CharactersRepositoryStrategy
+import com.test.core.data.repository.strategies.CharactersRepositoryStrategy
+import com.test.core.data.repository.strategies.NonPaginatedCharactersRepositoryStrategy
+import com.test.core.data.repository.strategies.PersistentCharactersRepositoryStrategy
 
-internal class MemoryCharactersRepositoryStrategy(override val upstream: CharactersRepositoryStrategy) :
-    CharactersRepositoryStrategyWithAnUpstream() {
+internal class MemoryCharactersRepositoryStrategy(
+    upstream: CharactersRepositoryStrategy
+) : NonPaginatedCharactersRepositoryStrategy(upstream), PersistentCharactersRepositoryStrategy {
 
     private val characterMap: MutableMap<Int, BreakingBadCharacter> = mutableMapOf()
 

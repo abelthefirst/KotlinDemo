@@ -1,34 +1,19 @@
 package com.test.core.data.repository.strategies.network
 
-import com.test.core.data.repository.BreakingBadCharacterListResult
-import com.test.core.data.repository.CharactersRepositoryStrategy
+import com.test.core.data.repository.strategies.PaginatedCharactersRepositoryStrategy
 import com.test.core.service.NetworkCharactersService
 
-internal class NetworkCharactersRepositoryStrategy(private val networkCharactersService: NetworkCharactersService) :
-    CharactersRepositoryStrategy {
+internal class NetworkCharactersRepositoryStrategy(
+    private val networkCharactersService: NetworkCharactersService
+) : PaginatedCharactersRepositoryStrategy() {
 
-    override fun clearCharacters() {}
+    override val pageSize = 10
 
-    override fun getCharacter(id: Int) = networkCharactersService.getCharacter(id)
+    override fun loadCharacter(id: Int) = networkCharactersService.getCharacter(id)
 
-    override fun getCharacters() = getCharacters(0)
-
-    override fun getCharacters(offset: Int): BreakingBadCharacterListResult {
-        val characters = networkCharactersService.getCharacters(
-            offset = offset,
-            pageSize = PAGE_SIZE
-        ).sortedBy { it.id }
-
-        return BreakingBadCharacterListResult(
-            characters = characters,
-            hasMore = characters.size == PAGE_SIZE
-        )
-    }
-
-    companion object {
-
-        private const val PAGE_SIZE = 10
-
-    }
+    override fun loadCharacters(offset: Int, pageSize: Int) = networkCharactersService.getCharacters(
+        offset = offset,
+        pageSize = pageSize
+    )
 
 }

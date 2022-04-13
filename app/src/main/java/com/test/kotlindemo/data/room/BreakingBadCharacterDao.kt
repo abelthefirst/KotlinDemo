@@ -14,7 +14,7 @@ interface BreakingBadCharacterDao {
     @Query("SELECT * FROM characters WHERE id = :id")
     fun getCharacter(id: Int): List<BreakingBadCharacterEntity>
 
-    @Query("SELECT * FROM characters")
+    @Query("SELECT * FROM characters ORDER BY id")
     fun getCharacters(): List<BreakingBadCharacterEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
