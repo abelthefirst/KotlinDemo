@@ -44,10 +44,14 @@ class CharactersRepositoryImpl(
     override fun refreshCharacters(): BreakingBadCharacterListResult {
         upstreamStrategy.clearCharacters()
 
-        hasMore = true
-        offset = 0
+        resetRepositoryState()
 
         return getMoreCharacters()
+    }
+
+    private fun resetRepositoryState() {
+        hasMore = true
+        offset = 0
     }
 
     private fun BreakingBadCharacterListResult.updateRepositoryState() {

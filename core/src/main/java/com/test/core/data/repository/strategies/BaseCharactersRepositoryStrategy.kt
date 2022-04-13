@@ -7,9 +7,7 @@ internal abstract class BaseCharactersRepositoryStrategy(
 ) : CharactersRepositoryStrategy {
 
     override fun clearCharacters() {
-        if (this is PersistentCharactersRepositoryStrategy) {
-            clearCharactersImpl()
-        }
+        (this as? PersistentCharactersRepositoryStrategy)?.clearCharactersImpl()
 
         upstream.clearCharacters()
     }

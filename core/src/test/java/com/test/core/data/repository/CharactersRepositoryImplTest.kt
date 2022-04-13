@@ -5,6 +5,7 @@ import com.test.core.service.NetworkCharactersService
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito
 
 class CharactersRepositoryImplTest {
@@ -111,6 +112,45 @@ class CharactersRepositoryImplTest {
         Mockito.verifyNoInteractions(networkCharactersService)
     }
 
-    private fun createCharacter() = BreakingBadCharacter("BIRTHDAY", 0, "IMAGE", "NAME", "NICKNAME", "STATUS")
+    @Test
+    fun test_getMoreCharacters() {
+        val characterEntity = createCharacter(id = 0)
+        val localStorageCharacters = listOf(characterEntity)
+        Mockito.`when`(localStorageService.getCharacters()).thenReturn(localStorageCharacters)
+        charactersRepositoryImpl.getCharacters()
+        Mockito.reset(localStorageService)
+
+        val networkCharacters = listOf(createCharacter(id = 1))
+        Mockito.`when`(networkCharactersService.getCharacters(eq(localStorageCharacters.size), anyInt())).thenReturn(networkCharacters)
+
+        val characters = charactersRepositoryImpl.getMoreCharacters()
+
+        Assert.assertEquals(networkCharacters, characters.characters)
+
+        Mockito.verify(localStorageService).setCharacters(networkCharacters)
+        Mockito.verifyNoMoreInteractions(localStorageService)
+    }
+
+    @Test
+    fun test_refreshCharacters() {
+        val characterEntity = createCharacter()
+        val localStorageCharacters = listOf(characterEntity)
+        Mockito.`when`(localStorageService.getCharacters()).thenReturn(localStorageCharacters)
+        charactersRepositoryImpl.getCharacters()
+        Mockito.reset(localStorageService)
+
+        val networkCharacters = listOf(createCharacter())
+        Mockito.`when`(networkCharactersService.getCharacters(eq(0), anyInt())).thenReturn(networkCharacters)
+
+        val characters = charactersRepositoryImpl.refreshCharacters()
+
+        Assert.assertEquals(networkCharacters, characters.characters)
+
+        Mockito.verify(localStorageService).clearCharacters()
+        Mockito.verify(localStorageService).setCharacters(networkCharacters)
+        Mockito.verifyNoMoreInteractions(localStorageService)
+    }
+
+    private fun createCharacter(id: Int = 0) = BreakingBadCharacter("BIRTHDAY", id, "IMAGE", "NAME", "NICKNAME", "STATUS")
 
 }

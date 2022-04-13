@@ -15,9 +15,7 @@ internal abstract class PaginatedCharactersRepositoryStrategy(
         val characters = loadCharacters(offset, pageSize)
         return if (characters.isEmpty()) {
             upstream.getCharacters(offset).also {
-                if (this is PersistentCharactersRepositoryStrategy) {
-                    setCharacters(it.characters)
-                }
+                (this as? PersistentCharactersRepositoryStrategy)?.setCharacters(it.characters)
             }
         } else {
             BreakingBadCharacterListResult(

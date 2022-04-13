@@ -11,9 +11,7 @@ internal abstract class NonPaginatedCharactersRepositoryStrategy(
         val characters = loadCharacters()
         return if (characters.isEmpty()) {
             upstream.getCharacters().also {
-                if (this is PersistentCharactersRepositoryStrategy) {
-                    setCharacters(it.characters)
-                }
+                (this as? PersistentCharactersRepositoryStrategy)?.setCharacters(it.characters)
             }
         } else {
             BreakingBadCharacterListResult(
@@ -24,9 +22,7 @@ internal abstract class NonPaginatedCharactersRepositoryStrategy(
     }
 
     override fun getCharacters(offset: Int) = upstream.getCharacters(offset).also {
-        if (this is PersistentCharactersRepositoryStrategy) {
-            setCharacters(it.characters)
-        }
+        (this as? PersistentCharactersRepositoryStrategy)?.setCharacters(it.characters)
     }
 
     protected abstract fun loadCharacters(): List<BreakingBadCharacter>
